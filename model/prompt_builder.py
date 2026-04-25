@@ -23,16 +23,18 @@ class PromptBuilder:
         self.ltm       = ltm
 
     def build(self, scene: str, mode: str,
-              target_code: str = None) -> str:
+              target_code: str = None,
+              input_text: str = "") -> str:
         """
         組裝完整 prompt。
         scene       : 當前場景描述
         mode        : "intuitive" 或 "deliberate"
         target_code : 當前互動對象的代號（可為 None）
+        input_text  : 當前收到的事件文字（對話時為「X對你說：...」）
         """
         if mode == "intuitive":
             return self._build_intuitive(scene, target_code)
-        return self._build_deliberate(scene, target_code)
+        return self._build_deliberate(scene, target_code, input_text)
 
     # ── 直覺路徑 ─────────────────────────────────────────────────
 
@@ -73,7 +75,8 @@ class PromptBuilder:
     # ── 思考路徑 ─────────────────────────────────────────────────
 
     def _build_deliberate(self, scene: str,
-                           target_code: str = None) -> str:
+                           target_code: str = None,
+                           input_text: str = "") -> str:
         """
         思考路徑：
         - personality 完整版 + habit
@@ -135,6 +138,7 @@ class PromptBuilder:
             stm_text        = stm_text,
             ltm_props_text  = ltm_props_text,
             scene           = scene,
+            current_event   = input_text,
         )
 
 

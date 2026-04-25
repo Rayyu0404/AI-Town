@@ -91,6 +91,26 @@ def _select_important(character, all_props: list,
                       turns: list, model_fn) -> list:
     """請模型從今天的 STM 命題中選出值得長期記憶的事件。"""
     if not all_props:
+        if not turns:
+            return []
+        # Bootstrap：Markov 路徑不生成 HAM，從行動紀錄建立基本命題供模型篩選
+        basic = []
+        for t in turns:
+            action = t.get('action', '')
+            scene  = t.get('scene', '')[:40]
+            if not action:
+                continue
+            if ':' in action:
+                verb, obj = action.split(':', 1)
+                basic.append({"subject": character.name,
+                               "relation": verb, "object": obj[:40]})
+            else:
+                basic.append({"subject": character.name,
+                               "relation": action,
+                               "object": scene if scene else "日常"})
+        all_props = basic[:5]
+
+    if not all_props:
         return []
 
     turns_text = _format_turns(turns)

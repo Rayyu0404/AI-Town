@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AGI 2 天模擬報告</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Segoe UI',sans-serif; background:#0a0f1e; color:#e2e8f0;
+       line-height:1.5; padding:24px; font-size:14px; }
+h1 { color:#f8fafc; font-size:1.8rem; margin-bottom:4px; }
+h2 { color:#94a3b8; font-size:.95rem; font-weight:normal; margin-bottom:24px; }
+.summary-bar { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:28px; }
+.sc { background:#1e293b; border-radius:12px; padding:14px 20px;
+      flex:1; min-width:120px; text-align:center; border:1px solid #334155; }
+.sc .val { font-size:1.9rem; font-weight:700; }
+.sc .lbl { font-size:.75rem; color:#94a3b8; margin-top:3px; }
+.pass { color:#22c55e; } .fail { color:#ef4444; }
+.rate { color:#f59e0b; } .blue { color:#38bdf8; } .purple { color:#a78bfa; }
+.green { color:#4ade80; } .pink { color:#f472b6; }
+.day-block { margin-bottom:32px; }
+.day-title { background:linear-gradient(135deg,#1e293b,#334155);
+             border-radius:10px 10px 0 0; padding:12px 20px;
+             display:flex; align-items:center; gap:12px; border:1px solid #475569; }
+.day-num { font-size:1.2rem; font-weight:700; color:#f8fafc; }
+.day-sub { color:#94a3b8; font-size:.88rem; }
+.slots-container { border:1px solid #334155; border-top:none;
+                   border-radius:0 0 10px 10px; overflow:hidden; }
+.slot-section { border-bottom:1px solid #1e293b; }
+.slot-header { background:#1a2332; padding:10px 20px;
+               display:flex; align-items:center; gap:14px; }
+.slot-time { font-size:1rem; font-weight:700; color:#38bdf8;
+             background:#0f172a; padding:2px 10px; border-radius:5px; }
+.slot-desc { color:#94a3b8; font-size:.85rem; }
+.slot-clock { color:#475569; font-size:.78rem; margin-left:auto; }
+.agents-grid { display:grid;
+               grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+               gap:10px; padding:14px; background:#0f172a; }
+.agent-card { background:#1e293b; border-radius:8px; padding:13px;
+              border:1px solid #334155; }
+.agent-header { display:flex; justify-content:space-between;
+                align-items:center; margin-bottom:7px; }
+.agent-name { font-weight:700; color:#f1f5f9; }
+.mode-badge { font-size:.68rem; padding:2px 8px; border-radius:999px;
+              color:#fff; white-space:nowrap; }
+.action-display { font-size:.92rem; background:#0f172a; padding:6px 10px;
+                  border-radius:5px; margin-bottom:7px;
+                  border-left:3px solid var(--mode-color,#3b82f6); }
+.confusion-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:7px; }
+.ctag { font-size:.72rem; padding:2px 7px; border-radius:4px;
+        background:#0f172a; color:#94a3b8; }
+.ctag.C-high { color:#f97316; background:#2d1a09; }
+.metrics { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:7px; }
+.metric { font-size:.72rem; color:#94a3b8; background:#0f172a;
+          padding:2px 7px; border-radius:4px; }
+.metric.loc { color:#38bdf8; }
+.metric.emo { color:#f472b6; }
+.prob-chart { margin-top:6px; }
+.prob-row { display:flex; align-items:center; gap:5px; margin-bottom:2px; }
+.prob-label { font-size:.68rem; color:#94a3b8; width:48px; text-align:right;
+              overflow:hidden; white-space:nowrap; }
+.prob-bg { flex:1; background:#0f172a; border-radius:3px; height:8px; }
+.prob-fill { background:#3b82f6; border-radius:3px; height:8px; }
+.prob-val { font-size:.67rem; color:#64748b; width:36px; }
+.thought-box { margin-top:7px; font-size:.78rem; color:#94a3b8;
+               background:#0f172a; padding:6px 9px; border-radius:5px;
+               border-left:2px solid #8b5cf6; font-style:italic; }
+.ham-tag { display:inline-block; background:#1a2814; color:#86efac;
+           font-size:.68rem; padding:1px 6px; border-radius:3px; margin-top:4px; }
+.sleep-grid { display:grid;
+              grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+              gap:10px; padding:14px; background:#060d1a; }
+.sleep-card { background:#1e293b; border-radius:8px; padding:12px;
+              border:1px solid #1e3a28; }
+.sleep-name { font-weight:700; color:#86efac; margin-bottom:6px; }
+.sleep-row { font-size:.78rem; color:#94a3b8; margin-bottom:3px; }
+.sleep-summary { font-size:.75rem; color:#64748b; margin-top:6px;
+                 font-style:italic; border-left:2px solid #1e4d2e;
+                 padding-left:6px; }
+.section-title { color:#f8fafc; font-size:1.1rem; font-weight:700;
+                 margin:28px 0 12px; border-left:4px solid #3b82f6;
+                 padding-left:12px; }
+.anomaly-box { background:#2d1a09; border:1px solid #7c2d12;
+               border-radius:8px; padding:12px 16px; margin:10px 0;
+               font-size:.83rem; color:#fdba74; }
+.anomaly-ok  { background:#0a1f14; border:1px solid #1e4d2e;
+               border-radius:8px; padding:10px 14px; margin:10px 0;
+               font-size:.83rem; color:#4ade80; }
+table { width:100%; border-collapse:collapse; margin:12px 0; }
+th { background:#1e293b; color:#94a3b8; font-size:.78rem; padding:9px 12px;
+     text-align:left; border-bottom:1px solid #334155; }
+td { padding:8px 12px; border-bottom:1px solid #1e293b; font-size:.83rem; }
+tr:hover td { background:#1e293b; }
+.stat-grid { display:grid;
+             grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+             gap:10px; margin:12px 0; }
+.stat-card { background:#1e293b; border-radius:8px; padding:12px 16px;
+             border:1px solid #334155; }
+.stat-title { font-size:.78rem; color:#94a3b8; margin-bottom:4px; }
+.stat-val   { font-size:1.3rem; font-weight:700; color:#f1f5f9; }
+.bar-wrap { margin:6px 0; }
+.bar-label { font-size:.72rem; color:#94a3b8; margin-bottom:2px; }
+.bar-bg { background:#0f172a; border-radius:4px; height:12px; }
+.bar-fill-m { background:#3b82f6; border-radius:4px; height:12px; }
+.bar-fill-d { background:#8b5cf6; border-radius:4px; height:12px; }
+.legend { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:20px; }
+.li { display:flex; align-items:center; gap:6px; font-size:.83rem; }
+.ld { width:13px; height:13px; border-radius:3px; }
+footer { margin-top:40px; color:#334155; font-size:.75rem; text-align:center; }
+/* ── Day Tabs ── */
+.tab-bar { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:18px; }
+.tab-btn { background:#1e293b; border:1px solid #334155; color:#94a3b8;
+           padding:7px 18px; border-radius:8px; cursor:pointer;
+           font-size:.85rem; font-weight:600; transition:all .15s; }
+.tab-btn:hover { background:#334155; color:#f1f5f9; }
+.tab-btn.active { background:#3b82f6; border-color:#3b82f6; color:#fff; }
+/* ── Conversation Pairs ── */
+.conv-section { background:#060d1a; border-top:1px solid #1e293b; padding:12px 16px; }
+.conv-header { font-size:.8rem; color:#64748b; margin-bottom:8px;
+               display:flex; align-items:center; gap:6px; cursor:pointer;
+               user-select:none; }
+.conv-header:hover { color:#94a3b8; }
+.conv-toggle { transition:transform .2s; display:inline-block; }
+.conv-toggle.open { transform:rotate(90deg); }
+.conv-list { display:none; }
+.conv-list.open { display:block; }
+.conv-pair { background:#0f172a; border-radius:7px; padding:10px 14px;
+             margin-bottom:8px; border:1px solid #1e293b; }
+.conv-pair:last-child { margin-bottom:0; }
+.conv-line { display:flex; align-items:flex-start; gap:8px; margin-bottom:4px; }
+.conv-line:last-child { margin-bottom:0; }
+.conv-who { font-size:.75rem; font-weight:700; min-width:52px;
+            padding:2px 7px; border-radius:4px; white-space:nowrap; }
+.conv-who.sender   { background:#1d3a5f; color:#60a5fa; }
+.conv-who.receiver { background:#2d1a4d; color:#c084fc; }
+.conv-msg { font-size:.82rem; color:#cbd5e1; line-height:1.5; }
+.conv-arrow { font-size:.78rem; color:#334155; padding:2px 0; }
+</style>
+</head>
+<body>
+<h1>AGI 自主生活模擬 — 2 天完整報告</h1>
+<h2>兩段式時間軸 × 馬可夫鏈（簡單思考）× LTM 自主推理（複雜思考）× 記憶濃縮</h2>
+
+<div class="summary-bar">
+  <div class="sc"><div class="val pass">41</div><div class="lbl">驗證通過</div></div>
+  <div class="sc"><div class="val fail">0</div><div class="lbl">驗證失敗</div></div>
+  <div class="sc"><div class="val rate">100.0%</div><div class="lbl">通過率</div></div>
+  <div class="sc"><div class="val blue">2</div><div class="lbl">模擬天數</div></div>
+  <div class="sc"><div class="val purple">11</div><div class="lbl">複雜思考次數</div></div>
+  <div class="sc"><div class="val pink">10</div><div class="lbl">對話行動次數</div></div>
+</div>
+
+<div class="legend">
+  <div class="li"><div class="ld" style="background:#3b82f6"></div><span>簡單思考（馬可夫鏈）C &lt; threshold</span></div>
+  <div class="li"><div class="ld" style="background:#8b5cf6"></div><span>複雜思考（LTM 自主推理）C ≥ threshold</span></div>
+  <div class="li"><div class="ld" style="background:#f97316"></div><span>高困惑指數（C ≥ 0.5）</span></div>
+</div>
+
+<div class="tab-bar"><button class="tab-btn  active" onclick="switchDay(1)">Day 1</button><button class="tab-btn" onclick="switchDay(2)">Day 2</button></div>
+<div id="day-content-1">
+<div class="day-block">
+  <div class="day-title">
+    <span class="day-num">Day 1</span>
+    <span class="day-sub">共 4 個時間段  ·  5 位角色入睡</span>
+  </div>
+  <div class="slots-container">
+    
+<div class="slot-section">
+  <div class="slot-header">
+    <span class="slot-time">🕐 07:00</span>
+    <span class="slot-desc">日常起床，各自準備</span>
+    <span class="slot-clock">第1天 07:00</span>
+  </div>
+  <div class="agents-grid">
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Amy (A)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.400</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=1</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Ben (B)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.300</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=1</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Claire (C)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.300</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=1</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">David (D)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.400</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=1</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍獨棟房子</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Emma (E)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子 2</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.300</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=1</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍獨棟房子 2</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div></div>
+  
+</div>
+<div class="slot-section">
+  <div class="slot-header">
+    <span class="slot-time">🕐 08:00</span>
+    <span class="slot-desc">Amy 開始工作；David 到咖啡廳買咖啡，有緊急電話</span>
+    <span class="slot-clock">第1天 07:30</span>
+  </div>
+  <div class="agents-grid">
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">Amy (A)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>對話:是嗎……我沒想到你會這樣說。</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.000</span>
+    <span class="ctag">U=0.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=2</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍咖啡廳</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="thought-box">💭 Amy輕輕咬了一下嘴唇，一時不知道怎麼接話。</div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Ben (B)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.300</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=2</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Claire (C)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.300</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=2</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">David (D)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>對話:有件事，我想直接問你。</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag C-high">C=0.640</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.60</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=2</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍咖啡廳</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="thought-box">💭 David停頓了一下，選擇開口，這對他來說並不容易。</div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Emma (E)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子 2</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.300</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=2</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍獨棟房子 2</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div></div>
+  <div class="conv-section">
+  <div class="conv-header" onclick="toggleConv('d1s1')">
+    <span class="conv-toggle" id="arr-d1s1">▶</span>
+    💬 本時段對話配對（1 組）— 點擊展開
+  </div>
+  <div class="conv-list" id="conv-d1s1">
+<div class="conv-pair">
+  <div class="conv-line">
+    <span class="conv-who sender">David</span>
+    <span class="conv-msg">有件事，我想直接問你。</span>
+  </div>
+  <div class="conv-arrow" style="padding-left:60px">↓</div>
+  <div class="conv-line">
+    <span class="conv-who receiver">Amy</span>
+    <span class="conv-msg">是嗎……我沒想到你會這樣說。</span>
+  </div>
+</div></div>
+</div>
+</div>
+<div class="slot-section">
+  <div class="slot-header">
+    <span class="slot-time">🕐 12:00</span>
+    <span class="slot-desc">午休；A 與 D 在咖啡廳繼續互動</span>
+    <span class="slot-clock">第1天 08:00</span>
+  </div>
+  <div class="agents-grid">
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">Amy (A)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>對話:謝謝你，這樣說讓我放心多了。</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag C-high">C=0.580</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.60</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=3</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍咖啡廳後場</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="thought-box">💭 Amy心裡暖了一下，笑了笑，感覺輕鬆不少。</div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Ben (B)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.257</span>
+    <span class="ctag">U=0.86</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=3</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:14%"></div></div><span class="prob-val">0.143</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Claire (C)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.257</span>
+    <span class="ctag">U=0.86</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=3</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:14%"></div></div><span class="prob-val">0.143</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">David (D)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>對話:好，我記住了。</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.000</span>
+    <span class="ctag">U=0.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=3</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍咖啡廳</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="thought-box">💭 David說話穩重，話雖不多，但份量十足。</div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Emma (E)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子 2</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.257</span>
+    <span class="ctag">U=0.86</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=3</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍獨棟房子 2</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:14%"></div></div><span class="prob-val">0.143</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div></div>
+</div></div>
+  <div class="conv-section">
+  <div class="conv-header" onclick="toggleConv('d1s2')">
+    <span class="conv-toggle" id="arr-d1s2">▶</span>
+    💬 本時段對話配對（1 組）— 點擊展開
+  </div>
+  <div class="conv-list" id="conv-d1s2">
+<div class="conv-pair">
+  <div class="conv-line">
+    <span class="conv-who sender">Amy</span>
+    <span class="conv-msg">謝謝你，這樣說讓我放心多了。</span>
+  </div>
+  <div class="conv-arrow" style="padding-left:60px">↓</div>
+  <div class="conv-line">
+    <span class="conv-who receiver">David</span>
+    <span class="conv-msg">好，我記住了。</span>
+  </div>
+</div></div>
+</div>
+</div>
+<div class="slot-section">
+  <div class="slot-header">
+    <span class="slot-time">🕐 18:00</span>
+    <span class="slot-desc">收工，各自返家</span>
+    <span class="slot-clock">第1天 08:30</span>
+  </div>
+  <div class="agents-grid">
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Amy (A)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.343</span>
+    <span class="ctag">U=0.86</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=4</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:14%"></div></div><span class="prob-val">0.143</span></div><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Ben (B)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.220</span>
+    <span class="ctag">U=0.73</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=4</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:19%"></div></div><span class="prob-val">0.200</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Claire (C)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.220</span>
+    <span class="ctag">U=0.73</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=4</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:19%"></div></div><span class="prob-val">0.200</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">David (D)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.343</span>
+    <span class="ctag">U=0.86</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=4</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍獨棟房子</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:14%"></div></div><span class="prob-val">0.143</span></div><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Emma (E)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子 2</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.220</span>
+    <span class="ctag">U=0.73</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=4</span>
+    <span class="metric">LTM=0</span>
+    <span class="metric loc">📍獨棟房子 2</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:19%"></div></div><span class="prob-val">0.200</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div></div>
+</div></div>
+  
+</div>
+    <div class="slot-section">
+      <div class="slot-header"><span class="slot-time">🌙 睡眠濃縮</span>
+        <span class="slot-desc">STM → LTM 記憶鞏固</span></div>
+      <div class="sleep-grid">
+<div class="sleep-card">
+  <div class="sleep-name">Amy (A)</div>
+  <div class="sleep-row">STM: 4→0（清空）</div>
+  <div class="sleep-row">LTM: 0→2（+2）  剪枝:0</div>
+  <div class="sleep-row">情緒: 平靜 → <strong style="color:#f472b6">開心</strong></div>
+  <div class="sleep-row">第 2 天</div>
+  <div class="sleep-summary">"Amy今天在咖啡廳工作，David來買咖啡，兩人有短暫交流，讓Amy心情愉快。"</div>
+</div>
+<div class="sleep-card">
+  <div class="sleep-name">Ben (B)</div>
+  <div class="sleep-row">STM: 4→0（清空）</div>
+  <div class="sleep-row">LTM: 0→1（+1）  剪枝:0</div>
+  <div class="sleep-row">情緒: 平靜</div>
+  <div class="sleep-row">第 2 天</div>
+  <div class="sleep-summary">"Ben今天在超市工作，沒有什麼特別的事發生。"</div>
+</div>
+<div class="sleep-card">
+  <div class="sleep-name">Claire (C)</div>
+  <div class="sleep-row">STM: 4→0（清空）</div>
+  <div class="sleep-row">LTM: 0→1（+1）  剪枝:0</div>
+  <div class="sleep-row">情緒: 平靜</div>
+  <div class="sleep-row">第 2 天</div>
+  <div class="sleep-summary">"Claire今天工作順利完成，一切都在掌握之中。"</div>
+</div>
+<div class="sleep-card">
+  <div class="sleep-name">David (D)</div>
+  <div class="sleep-row">STM: 4→0（清空）</div>
+  <div class="sleep-row">LTM: 0→2（+2）  剪枝:0</div>
+  <div class="sleep-row">情緒: 平靜</div>
+  <div class="sleep-row">第 2 天</div>
+  <div class="sleep-summary">"David按照習慣去咖啡廳，工作一切正常，今天沒有什麼特別的事。"</div>
+</div>
+<div class="sleep-card">
+  <div class="sleep-name">Emma (E)</div>
+  <div class="sleep-row">STM: 4→0（清空）</div>
+  <div class="sleep-row">LTM: 0→1（+1）  剪枝:0</div>
+  <div class="sleep-row">情緒: 平靜</div>
+  <div class="sleep-row">第 2 天</div>
+  <div class="sleep-summary">"Emma今天工作忙碌，一切都很正常。"</div>
+</div></div>
+    </div>
+  </div>
+  <div class="anomaly-ok">✓ 無異常偵測</div>
+</div></div><div id="day-content-2" style="display:none">
+<div class="day-block">
+  <div class="day-title">
+    <span class="day-num">Day 2</span>
+    <span class="day-sub">共 4 個時間段  ·  5 位角色入睡</span>
+  </div>
+  <div class="slots-container">
+    
+<div class="slot-section">
+  <div class="slot-header">
+    <span class="slot-time">🕐 07:00</span>
+    <span class="slot-desc">第二天早晨（有 LTM）；「突然」場景 → S 觸發複雜思考</span>
+    <span class="slot-clock">第2天 07:00</span>
+  </div>
+  <div class="agents-grid">
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">Amy (A)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>休息</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag C-high">C=0.550</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.25</span>
+    <span class="ctag">S=0.25</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=1</span>
+    <span class="metric">LTM=2</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫開心</span>
+  </div>
+  <div class="thought-box">💭 趁空檔喘口氣，腦子裡卻還是轉個不停。</div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Ben (B)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.425</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.25</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=1</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Claire (C)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.375</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.25</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=1</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">David (D)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.450</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.25</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=1</span>
+    <span class="metric">LTM=2</span>
+    <span class="metric loc">📍獨棟房子</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Emma (E)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子 2</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.400</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.25</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=1</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍獨棟房子 2</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div></div>
+  
+</div>
+<div class="slot-section">
+  <div class="slot-header">
+    <span class="slot-time">🕐 08:00</span>
+    <span class="slot-desc">Ben 到咖啡廳；A 與 B 互動</span>
+    <span class="slot-clock">第2天 07:30</span>
+  </div>
+  <div class="agents-grid">
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">Amy (A)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>對話:今天的咖啡調好了，你要嗎？</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag C-high">C=0.655</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.60</span>
+    <span class="ctag">S=0.25</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=2</span>
+    <span class="metric">LTM=2</span>
+    <span class="metric loc">📍咖啡廳</span>
+    <span class="metric emo">💫開心</span>
+  </div>
+  <div class="thought-box">💭 Amy鼓起勇氣先開口，心跳有點快但表面維持自然。</div>
+</div>
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">Ben (B)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>對話:其實……我也有點想說什麼，但不知道怎麼開口。</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.125</span>
+    <span class="ctag">U=0.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.25</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=2</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍咖啡廳</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="thought-box">💭 Ben想說些什麼，目光落在遠處，最後還是退縮了一半。</div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Claire (C)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.300</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=2</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">David (D)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.400</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=2</span>
+    <span class="metric">LTM=2</span>
+    <span class="metric loc">📍獨棟房子</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Emma (E)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子 2</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.300</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=2</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍獨棟房子 2</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.077</span></div></div>
+</div></div>
+  <div class="conv-section">
+  <div class="conv-header" onclick="toggleConv('d2s1')">
+    <span class="conv-toggle" id="arr-d2s1">▶</span>
+    💬 本時段對話配對（1 組）— 點擊展開
+  </div>
+  <div class="conv-list" id="conv-d2s1">
+<div class="conv-pair">
+  <div class="conv-line">
+    <span class="conv-who sender">Amy</span>
+    <span class="conv-msg">今天的咖啡調好了，你要嗎？</span>
+  </div>
+  <div class="conv-arrow" style="padding-left:60px">↓</div>
+  <div class="conv-line">
+    <span class="conv-who receiver">Ben</span>
+    <span class="conv-msg">其實……我也有點想說什麼，但不知道怎麼開口。</span>
+  </div>
+</div></div>
+</div>
+</div>
+<div class="slot-section">
+  <div class="slot-header">
+    <span class="slot-time">🕐 12:00</span>
+    <span class="slot-desc">Claire 與 Emma 在餐廳相遇</span>
+    <span class="slot-clock">第2天 08:00</span>
+  </div>
+  <div class="agents-grid">
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Amy (A)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>休息</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.400</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=3</span>
+    <span class="metric">LTM=2</span>
+    <span class="metric loc">📍咖啡廳後場</span>
+    <span class="metric emo">💫開心</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:13%"></div></div><span class="prob-val">0.133</span></div><div class="prob-row"><span class="prob-label">休息</span><div class="prob-bg"><div class="prob-fill" style="width:13%"></div></div><span class="prob-val">0.133</span></div><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Ben (B)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.300</span>
+    <span class="ctag">U=1.00</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=3</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:13%"></div></div><span class="prob-val">0.133</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:13%"></div></div><span class="prob-val">0.133</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.067</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">Claire (C)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>對話:我有件事想聽你的意見，你有空嗎？</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag C-high">C=0.512</span>
+    <span class="ctag">U=0.86</span>
+    <span class="ctag">K=0.45</span>
+    <span class="ctag">S=0.25</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=3</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍餐廳</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="thought-box">💭 Claire說話一向直接，但這次開口前多猶豫了一秒。</div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">David (D)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.343</span>
+    <span class="ctag">U=0.86</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=3</span>
+    <span class="metric">LTM=2</span>
+    <span class="metric loc">📍獨棟房子</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:14%"></div></div><span class="prob-val">0.143</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">Emma (E)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>對話:謝謝你敢說出來，這樣就好多了。</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.235</span>
+    <span class="ctag">U=0.00</span>
+    <span class="ctag">K=0.45</span>
+    <span class="ctag">S=0.25</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=3</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍餐廳</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="thought-box">💭 Emma感受到對方的誠意，心裡也有些觸動。</div>
+</div></div>
+  <div class="conv-section">
+  <div class="conv-header" onclick="toggleConv('d2s2')">
+    <span class="conv-toggle" id="arr-d2s2">▶</span>
+    💬 本時段對話配對（1 組）— 點擊展開
+  </div>
+  <div class="conv-list" id="conv-d2s2">
+<div class="conv-pair">
+  <div class="conv-line">
+    <span class="conv-who sender">Claire</span>
+    <span class="conv-msg">我有件事想聽你的意見，你有空嗎？</span>
+  </div>
+  <div class="conv-arrow" style="padding-left:60px">↓</div>
+  <div class="conv-line">
+    <span class="conv-who receiver">Emma</span>
+    <span class="conv-msg">謝謝你敢說出來，這樣就好多了。</span>
+  </div>
+</div></div>
+</div>
+</div>
+<div class="slot-section">
+  <div class="slot-header">
+    <span class="slot-time">🕐 18:00</span>
+    <span class="slot-desc">傍晚活動，回家前的心情</span>
+    <span class="slot-clock">第2天 08:30</span>
+  </div>
+  <div class="agents-grid">
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Amy (A)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.343</span>
+    <span class="ctag">U=0.86</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=4</span>
+    <span class="metric">LTM=2</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫開心</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:14%"></div></div><span class="prob-val">0.143</span></div><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Ben (B)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:公寓</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.257</span>
+    <span class="ctag">U=0.86</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=4</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍公寓</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:14%"></div></div><span class="prob-val">0.143</span></div><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:7%"></div></div><span class="prob-val">0.071</span></div></div>
+</div>
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">Claire (C)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>對話:我有件事想聽你的意見，你有空嗎？</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.443</span>
+    <span class="ctag">U=0.88</span>
+    <span class="ctag">K=0.45</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=4</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍辦公室</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="thought-box">💭 Claire說話一向直接，但這次開口前多猶豫了一秒。</div>
+</div>
+<div class="agent-card" style="--mode-color:#8b5cf6; border-top:3px solid #8b5cf6">
+  <div class="agent-header">
+    <span class="agent-name">David (D)</span>
+    <span class="mode-badge" style="background:#8b5cf6">複雜思考 LTM</span>
+  </div>
+  <div class="action-display">→ <strong>對話:嗯，讓我想想。</strong><span class="ham-tag">HAM ×1</span></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.180</span>
+    <span class="ctag">U=0.00</span>
+    <span class="ctag">K=0.45</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=4</span>
+    <span class="metric">LTM=2</span>
+    <span class="metric loc">📍辦公室</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="thought-box">💭 David習慣在開口前多想一秒，這次也一樣。</div>
+</div>
+<div class="agent-card" style="--mode-color:#3b82f6; border-top:3px solid #3b82f6">
+  <div class="agent-header">
+    <span class="agent-name">Emma (E)</span>
+    <span class="mode-badge" style="background:#3b82f6">簡單思考 Markov</span>
+  </div>
+  <div class="action-display">→ <strong>前往:獨棟房子 2</strong></div>
+  <div class="confusion-row">
+    <span class="ctag ">C=0.263</span>
+    <span class="ctag">U=0.88</span>
+    <span class="ctag">K=0.00</span>
+    <span class="ctag">S=0.00</span>
+  </div>
+  <div class="metrics">
+    <span class="metric">STM=4</span>
+    <span class="metric">LTM=1</span>
+    <span class="metric loc">📍獨棟房子 2</span>
+    <span class="metric emo">💫平靜</span>
+  </div>
+  <div class="prob-chart"><div class="prob-row"><span class="prob-label">前往</span><div class="prob-bg"><div class="prob-fill" style="width:18%"></div></div><span class="prob-val">0.188</span></div><div class="prob-row"><span class="prob-label">對話</span><div class="prob-bg"><div class="prob-fill" style="width:12%"></div></div><span class="prob-val">0.125</span></div><div class="prob-row"><span class="prob-label">回家</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.062</span></div><div class="prob-row"><span class="prob-label">打招呼</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.062</span></div><div class="prob-row"><span class="prob-label">忽略</span><div class="prob-bg"><div class="prob-fill" style="width:6%"></div></div><span class="prob-val">0.062</span></div></div>
+</div></div>
+  <div class="conv-section">
+  <div class="conv-header" onclick="toggleConv('d2s3')">
+    <span class="conv-toggle" id="arr-d2s3">▶</span>
+    💬 本時段對話配對（1 組）— 點擊展開
+  </div>
+  <div class="conv-list" id="conv-d2s3">
+<div class="conv-pair">
+  <div class="conv-line">
+    <span class="conv-who sender">Claire</span>
+    <span class="conv-msg">我有件事想聽你的意見，你有空嗎？</span>
+  </div>
+  <div class="conv-arrow" style="padding-left:60px">↓</div>
+  <div class="conv-line">
+    <span class="conv-who receiver">David</span>
+    <span class="conv-msg">嗯，讓我想想。</span>
+  </div>
+</div></div>
+</div>
+</div>
+    <div class="slot-section">
+      <div class="slot-header"><span class="slot-time">🌙 睡眠濃縮</span>
+        <span class="slot-desc">STM → LTM 記憶鞏固</span></div>
+      <div class="sleep-grid">
+<div class="sleep-card">
+  <div class="sleep-name">Amy (A)</div>
+  <div class="sleep-row">STM: 4→0（清空）</div>
+  <div class="sleep-row">LTM: 2→4（+2）  剪枝:0</div>
+  <div class="sleep-row">情緒: 開心 → <strong style="color:#f472b6">平靜</strong></div>
+  <div class="sleep-row">第 3 天</div>
+  <div class="sleep-summary">"Amy越來越在意David，每次他來咖啡廳都讓她心跳加速，說不清是什麼感覺。"</div>
+</div>
+<div class="sleep-card">
+  <div class="sleep-name">Ben (B)</div>
+  <div class="sleep-row">STM: 4→0（清空）</div>
+  <div class="sleep-row">LTM: 1→3（+2）  剪枝:0</div>
+  <div class="sleep-row">情緒: 平靜</div>
+  <div class="sleep-row">第 3 天</div>
+  <div class="sleep-summary">"Ben想去找Amy說話，但一直沒有好的機會，心裡有些失落。"</div>
+</div>
+<div class="sleep-card">
+  <div class="sleep-name">Claire (C)</div>
+  <div class="sleep-row">STM: 4→0（清空）</div>
+  <div class="sleep-row">LTM: 1→3（+2）  剪枝:0</div>
+  <div class="sleep-row">情緒: 平靜 → <strong style="color:#f472b6">興奮</strong></div>
+  <div class="sleep-row">第 3 天</div>
+  <div class="sleep-summary">"Claire在餐廳看到Emma，莫名心跳加速，今天心情特別好，說不清為什麼。"</div>
+</div>
+<div class="sleep-card">
+  <div class="sleep-name">David (D)</div>
+  <div class="sleep-row">STM: 4→0（清空）</div>
+  <div class="sleep-row">LTM: 2→4（+2）  剪枝:0</div>
+  <div class="sleep-row">情緒: 平靜 → <strong style="color:#f472b6">困惑</strong></div>
+  <div class="sleep-row">第 3 天</div>
+  <div class="sleep-summary">"David今天工作中分了些心，Amy的眼神讓他有一瞬間說不清楚的感覺。"</div>
+</div>
+<div class="sleep-card">
+  <div class="sleep-name">Emma (E)</div>
+  <div class="sleep-row">STM: 4→0（清空）</div>
+  <div class="sleep-row">LTM: 1→3（+2）  剪枝:0</div>
+  <div class="sleep-row">情緒: 平靜</div>
+  <div class="sleep-row">第 3 天</div>
+  <div class="sleep-summary">"Emma今天遇到了Claire，覺得她好像有些特別的地方，但說不清是什麼。"</div>
+</div></div>
+    </div>
+  </div>
+  <div class="anomaly-ok">✓ 無異常偵測</div>
+</div></div>
+
+
+<div class="section-title">📊 統計分析</div>
+<div class="stat-grid">
+  <div class="stat-card"><div class="stat-title">總行動次數</div><div class="stat-val blue">40</div></div>
+  <div class="stat-card"><div class="stat-title">複雜思考率</div><div class="stat-val purple">27.5%</div></div>
+  <div class="stat-card"><div class="stat-title">對話行動次數</div><div class="stat-val pink">10</div></div>
+  <div class="stat-card"><div class="stat-title">模擬天數</div><div class="stat-val green">2</div></div>
+</div>
+
+<div class="bar-wrap">
+  <div class="bar-label">簡單思考 29 次 (72%) vs 複雜思考 11 次 (28%)</div>
+  <div style="display:flex;height:14px;border-radius:4px;overflow:hidden">
+    <div style="width:72%;background:#3b82f6"></div>
+    <div style="width:28%;background:#8b5cf6"></div>
+  </div>
+</div>
+<div class="section-title">📈 LTM 成長（各天末）</div>
+
+<table>
+  <tr><th>天數</th><th>Amy</th><th>Ben</th><th>Claire</th><th>David</th><th>Emma</th><th>合計</th></tr>
+  <tr><td>Day 1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td><strong>0</strong></td></tr><tr><td>Day 2</td><td>2</td><td>1</td><td>1</td><td>2</td><td>1</td><td><strong>7</strong></td></tr>
+</table>
+<div class="section-title">🧠 困惑指數趨勢（前 24 筆）</div>
+
+<table>
+  <tr><th>時段</th><th>角色</th><th>C</th><th>U</th><th>K</th><th>S</th><th>路徑</th></tr>
+  <tr><td>Day1 07:00</td><td>Amy</td><td style="color:#94a3b8">0.400</td><td>1.00</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 07:00</td><td>Ben</td><td style="color:#94a3b8">0.300</td><td>1.00</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 07:00</td><td>Claire</td><td style="color:#94a3b8">0.300</td><td>1.00</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 07:00</td><td>David</td><td style="color:#94a3b8">0.400</td><td>1.00</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 07:00</td><td>Emma</td><td style="color:#94a3b8">0.300</td><td>1.00</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 08:00</td><td>David</td><td style="color:#f97316">0.640</td><td>1.00</td><td>0.60</td><td>0.00</td><td><span class="mode-badge" style="background:#8b5cf6">deliberate</span></td></tr><tr><td>Day1 08:00</td><td>Amy</td><td style="color:#94a3b8">0.000</td><td>0.00</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#8b5cf6">deliberate</span></td></tr><tr><td>Day1 08:00</td><td>Ben</td><td style="color:#94a3b8">0.300</td><td>1.00</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 08:00</td><td>Claire</td><td style="color:#94a3b8">0.300</td><td>1.00</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 08:00</td><td>Emma</td><td style="color:#94a3b8">0.300</td><td>1.00</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 12:00</td><td>Amy</td><td style="color:#f97316">0.580</td><td>1.00</td><td>0.60</td><td>0.00</td><td><span class="mode-badge" style="background:#8b5cf6">deliberate</span></td></tr><tr><td>Day1 12:00</td><td>David</td><td style="color:#94a3b8">0.000</td><td>0.00</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#8b5cf6">deliberate</span></td></tr><tr><td>Day1 12:00</td><td>Ben</td><td style="color:#94a3b8">0.257</td><td>0.86</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 12:00</td><td>Claire</td><td style="color:#94a3b8">0.257</td><td>0.86</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 12:00</td><td>Emma</td><td style="color:#94a3b8">0.257</td><td>0.86</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 18:00</td><td>Amy</td><td style="color:#94a3b8">0.343</td><td>0.86</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 18:00</td><td>Ben</td><td style="color:#94a3b8">0.220</td><td>0.73</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 18:00</td><td>Claire</td><td style="color:#94a3b8">0.220</td><td>0.73</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 18:00</td><td>David</td><td style="color:#94a3b8">0.343</td><td>0.86</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day1 18:00</td><td>Emma</td><td style="color:#94a3b8">0.220</td><td>0.73</td><td>0.00</td><td>0.00</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day2 07:00</td><td>Amy</td><td style="color:#f97316">0.550</td><td>1.00</td><td>0.25</td><td>0.25</td><td><span class="mode-badge" style="background:#8b5cf6">deliberate</span></td></tr><tr><td>Day2 07:00</td><td>Ben</td><td style="color:#94a3b8">0.425</td><td>1.00</td><td>0.00</td><td>0.25</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day2 07:00</td><td>Claire</td><td style="color:#94a3b8">0.375</td><td>1.00</td><td>0.00</td><td>0.25</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr><tr><td>Day2 07:00</td><td>David</td><td style="color:#94a3b8">0.450</td><td>1.00</td><td>0.00</td><td>0.25</td><td><span class="mode-badge" style="background:#3b82f6">markov</span></td></tr>
+</table>
+<div class="section-title">💫 情緒變化</div>
+
+<table>
+  <tr><th>角色</th><th colspan="4">天數別情緒變化</th></tr>
+  <tr><td>Amy</td><td>Day1: 平靜→開心</td><td>Day2: 開心→平靜</td></tr><tr><td>Ben</td><td>Day1: 平靜→平靜</td><td>Day2: 平靜→平靜</td></tr><tr><td>Claire</td><td>Day1: 平靜→平靜</td><td>Day2: 平靜→興奮</td></tr><tr><td>David</td><td>Day1: 平靜→平靜</td><td>Day2: 平靜→困惑</td></tr><tr><td>Emma</td><td>Day1: 平靜→平靜</td><td>Day2: 平靜→平靜</td></tr>
+</table>
+<div class="section-title">✅ 異常偵測</div><div class="anomaly-ok">2 天模擬期間未偵測到任何邏輯或數值異常</div>
+
+<footer>AGI 自主生活模擬系統 — simulate.py 2 天模擬報告</footer>
+<script>
+function switchDay(n) {
+  document.querySelectorAll('[id^="day-content-"]').forEach(function(el) {
+    el.style.display = 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+  });
+  var target = document.getElementById('day-content-' + n);
+  if (target) target.style.display = '';
+  var btns = document.querySelectorAll('.tab-btn');
+  if (btns[n-1]) btns[n-1].classList.add('active');
+}
+function toggleConv(uid) {
+  var list = document.getElementById('conv-' + uid);
+  var arr  = document.getElementById('arr-' + uid);
+  if (!list) return;
+  var open = list.classList.toggle('open');
+  if (arr) arr.classList.toggle('open', open);
+}
+</script>
+</body>
+</html>

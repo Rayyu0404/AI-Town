@@ -143,35 +143,40 @@ def prompt_deliberate(character_name: str,
                        relationship_text: str,
                        stm_text: str,
                        ltm_props_text: str,
-                       scene: str) -> str:
+                       scene: str,
+                       current_event: str = "") -> str:
     """
-    思考路徑 prompt：完整推理，帶入更多記憶與個性細節。
-    用於 prompt_builder.build_deliberate()
+    思考路徑 prompt（複雜思考）：完整記憶注入，模型自主決策。
+    角色根據完整長短期記憶、個性、情緒，自己選擇最合適的行動。
+    用於 prompt_builder.build_deliberate() 與 agent.decide()（LTM 路徑）
     """
-    actions_str = "、".join(VALID_ACTIONS)
+    actions_str   = "、".join(VALID_ACTIONS)
     locations_str = "、".join(VALID_LOCATIONS)
 
-    ltm_part = f"\n【長期記憶】\n{ltm_props_text}" if ltm_props_text else ""
-    rel_part = f"\n【與對方的關係】\n{relationship_text}" if relationship_text else ""
+    ltm_part   = f"\n【長期記憶（HAM 命題）】\n{ltm_props_text}" if ltm_props_text else ""
+    rel_part   = f"\n【與對方的關係】\n{relationship_text}" if relationship_text else ""
+    event_part = f"\n\n【當前事件】\n{current_event}" if current_event else ""
 
-    return f"""你正在扮演 {character_name}。
+    return f"""你正在扮演 {character_name}，請根據你的完整記憶與個性，自主決定此刻最想做的事。
 
 【完整個性】{personality}
 【習慣】{habit}
 【目前情緒】{emotion}{rel_part}
-【今天發生的事（短期記憶）】
+【今天的短期記憶（STM）】
 {stm_text}{ltm_part}
 
 【目前場景】
-{scene}
+{scene}{event_part}
 
 【可執行的行動】{actions_str}
 【可前往的地點】{locations_str}
 
-請仔細思考後，依照以下格式回答：
-[ACTION]: （從行動清單選一個，移動請用「前往:地點」，對話請用「對話:說的內容」）
-[THOUGHT]: （{character_name} 的內心想法，2-3句，反映個性與當下感受）
-[HAM]: （本場景抽取的命題，JSON陣列，1-5筆，格式：[{{"subject":"...","relation":"...","object":"...","location":"...","time":"..."}}]）
+仔細回顧你的記憶與個性後，選出你認為現在最應該做的事。
+請依照以下格式回答：
+[ACTION]: （從行動清單選一個；移動用「前往:地點」；對話用「對話:想說的話」）
+[THOUGHT]: （{character_name} 的內心想法，2-3 句，反映個性、記憶與當下情境）
+[HAM]: （本場景的關鍵命題，JSON 陣列，1-5 筆）
+格式：[{{"subject":"...","relation":"...","object":"...","location":"...","time":"..."}}]
 [/HAM]"""
 
 

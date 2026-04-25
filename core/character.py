@@ -16,6 +16,16 @@ class Character:
     def __init__(self, data: dict):
         self._data = data
 
+        # ── 執行期暫存狀態（不持久化到 JSON）────────────────────────
+        # 兩段式時間軸：決策先存 pending，下一時段才執行
+        self.pending_action: str = ""          # 下個時段要執行的行動
+        self.pending_target: str = ""          # 下個時段行動的目標（地點或對象名字）
+        self.pending_decision_done: bool = False  # 本時段是否已完成決策
+
+        # 對話狀態（每個時段重置）
+        self.conversation_partner: str = ""    # 目前對話對象的代號
+        self.conversation_turns_this_slot: int = 0  # 本時段已進行的對話輪數
+
     # ── 基本屬性 ─────────────────────────────────────────────────
 
     @property
@@ -184,6 +194,14 @@ class Character:
         self._data["state"]["day"] += 1
         self.clear_today_actions()
         self.reset_schedule()
+
+    # ── 執行期狀態重置（每個時間段開始時呼叫）──────────────────────
+
+    def reset_slot_state(self):
+        """重置每個時間段的暫存狀態（對話狀態、決策旗標）。"""
+        self.pending_decision_done = False
+        self.conversation_partner = ""
+        self.conversation_turns_this_slot = 0
 
     # ── 取得原始 dict（供 file_io 寫回磁碟用）───────────────────
 

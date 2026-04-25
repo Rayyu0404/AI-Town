@@ -1,11 +1,23 @@
 # ================================================================
 # core/confusion.py
 # 困惑指數計算：C = w1*U + w2*K + w3*S
-# 決定本輪走直覺路徑還是思考路徑
+# 決定本輪走直覺路徑（Markov）還是思考路徑（LTM 推理）
 #
 # U (Uncertainty) : 模型對自身判斷的不確定性
-# K (Conflict)    : 輸入之間的矛盾程度
-# S (Surprise)    : 當前狀態與 LTM 預期的差異
+#   候選行動最高分與第二高分差距越小 → U 越高
+#
+# K (Conflict)    : 輸入之間的矛盾程度（邏輯衝突 + 情緒複雜性）
+#   邏輯衝突偵測：CONFLICT_PAIRS 觸發 +0.6
+#   強情緒（不知所措/思緒紊亂）：+0.45
+#   一般情緒（心跳/緊張/告白）：+0.25
+#   K ≥ 0.4 → 強制 deliberate（不論 C 是否超過閾值）
+#
+# S (Surprise)    : 當前場景與 LTM 預期的差異
+#   高驚訝（陌生人/從沒見過）：+0.6
+#   中高（第一次）：+0.5
+#   中（意外/沒想到）：+0.35
+#   低（突然）：+0.25
+#   LTM 為空（第一天）→ S=0（無可比較的預期）
 #
 # 參考：Shenhav, Botvinick & Cohen (2013)
 #   The Expected Value of Control: ACC Function
@@ -34,33 +46,58 @@ def compute_U(action_candidates: list) -> float:
 
 
 def compute_K(image_desc: str, input_text: str,
-              current_action: str) -> float:
+              current_action: str,
+              current_scene: str = "") -> float:
     """
     計算衝突程度 K。
-    簡化版：比較視覺描述、輸入文字、當前行動之間是否有明顯矛盾。
-    目前用關鍵字比對，之後可升級為模型計算。
+    同時偵測兩類衝突：
+      1. 邏輯衝突：輸入要求行動與當前狀態矛盾（緊急 + 休息）
+      2. 情緒複雜性：場景/輸入含有高情緒負荷關鍵字
 
     image_desc     : YOLO 轉語意的圖片描述
     input_text     : 接收到的對話或事件
     current_action : 角色當前正在做的事
+    current_scene  : 當前場景描述（供情緒偵測用）
     """
     conflict_score = 0.0
 
-    # 簡單規則：輸入要求行動，但當前行動是相反的
+    # ── 邏輯衝突偵測 ─────────────────────────────────────────────
     CONFLICT_PAIRS = [
-        (["離開", "走了", "再見"], ["等待", "休息", "工作"]),
-        (["緊急", "快", "危險"],  ["休息", "睡覺", "滑手機"]),
-        (["來了", "到了", "進來"], ["工作", "整理"]),
+        (["離開", "走了", "再見"],   ["等待", "休息", "工作"]),
+        (["緊急", "快", "危險"],     ["休息", "睡覺", "滑手機"]),
+        (["來了", "到了", "進來"],   ["工作", "整理"]),
     ]
 
-    combined = f"{image_desc} {input_text}".lower()
+    combined    = f"{image_desc} {input_text}".lower()
     action_lower = current_action.lower()
 
     for trigger_words, conflict_actions in CONFLICT_PAIRS:
-        has_trigger  = any(w in combined     for w in trigger_words)
-        has_conflict = any(w in action_lower for w in conflict_actions)
+        has_trigger  = any(w in combined      for w in trigger_words)
+        has_conflict = any(w in action_lower  for w in conflict_actions)
         if has_trigger and has_conflict:
             conflict_score += 0.6
+
+    # ── 情緒複雜性偵測（場景 + 輸入均納入） ──────────────────────
+    combined_all = f"{combined} {current_scene}".lower()
+
+    # 強情緒複雜性：思緒混亂、完全不知所措
+    STRONG_EMOTION = [
+        "混亂", "一片混亂", "說不清楚", "無法理解",
+        "心亂", "不知所措", "不知道如何",
+        "思緒很亂", "思緒紊亂",
+    ]
+    # 一般情緒/關係複雜性
+    MOD_EMOTION = [
+        "心跳加速", "心跳", "緊張", "期待", "在意",
+        "感情", "告白", "表白", "暗戀", "心動",
+        "情緒", "心情複雜", "心情有些",
+        "思緒", "心裡有些",
+    ]
+
+    if any(kw in combined_all for kw in STRONG_EMOTION):
+        conflict_score += 0.45   # 強烈情緒複雜性
+    elif any(kw in combined_all for kw in MOD_EMOTION):
+        conflict_score += 0.25   # 一般情緒複雜性
 
     return round(min(conflict_score, 1.0), 4)
 
@@ -73,22 +110,37 @@ def compute_S(current_scene: str, ltm_summary: str,
 
     current_scene  : 當前場景描述
     ltm_summary    : LTM 壓縮摘要（代表角色的「預期世界」）
-    today_actions  : 今天已執行的行動（用來偵測偏離時間表）
+    today_actions  : 今天已執行的行動（備用，目前未使用）
+
+    驚訝分級：
+      高：完全陌生的人/從沒見過          → 0.6
+      中高：第一次發生的事               → 0.5
+      中：一般「意外」                    → 0.35
+      低：「突然」（常見口語，不必然驚訝）→ 0.25
     """
-    # LTM 是空的（剛開始第一天）→ 無法比較，S=0
+    # LTM 是空的（第一天）→ 無法比較，S=0
     if not ltm_summary:
         return 0.0
 
     surprise_score = 0.0
 
-    # 規則 1：場景中出現 LTM 從未提過的人名或地點
-    SURPRISE_KEYWORDS = ["陌生人", "從沒見過", "第一次", "意外", "突然"]
-    if any(kw in current_scene for kw in SURPRISE_KEYWORDS):
-        surprise_score += 0.7
+    # 高驚訝：真正遇到陌生或未預期的人/事
+    HIGH_SURPRISE = ["陌生人", "從沒見過", "完全不認識", "第一次見到", "突然闖入"]
+    # 中高驚訝：第一次發生
+    MID_HIGH_SURPRISE = ["第一次", "從未"]
+    # 中驚訝：一般意外
+    MID_SURPRISE = ["意外", "沒想到", "不可思議"]
+    # 低驚訝：「突然」這個口語詞（過度使用不代表真正驚訝）
+    LOW_SURPRISE = ["突然"]
 
-    # 規則 2：今天完全沒有執行任何行動（卡住了）
-    if not today_actions:
-        surprise_score += 0.2
+    if any(kw in current_scene for kw in HIGH_SURPRISE):
+        surprise_score += 0.6
+    elif any(kw in current_scene for kw in MID_HIGH_SURPRISE):
+        surprise_score += 0.5
+    elif any(kw in current_scene for kw in MID_SURPRISE):
+        surprise_score += 0.35
+    elif any(kw in current_scene for kw in LOW_SURPRISE):
+        surprise_score += 0.25
 
     return round(min(surprise_score, 1.0), 4)
 
@@ -121,7 +173,10 @@ def evaluate(image_desc: str, input_text: str,
              action_candidates: list = None) -> dict:
     """
     一次計算所有指數並決定模式，回傳完整結果 dict。
-    這是主要對外介面，agent.py 直接呼叫這個。
+
+    情緒強度 override：
+      K >= 0.4 → 強制 deliberate
+      （高情緒複雜度場景需要深度思考，不管 C 是否超過閾值或是否有 LTM）
 
     回傳格式：
     {
@@ -130,9 +185,14 @@ def evaluate(image_desc: str, input_text: str,
     }
     """
     U = compute_U(action_candidates or [])
-    K = compute_K(image_desc, input_text, current_action)
+    K = compute_K(image_desc, input_text, current_action, current_scene)
     S = compute_S(current_scene, ltm_summary, today_actions)
     C = compute_confusion(U, K, S, weights)
-    mode = decide_mode(C, weights.get("threshold", 0.5))
+
+    # 情緒強度 override：K >= 0.4 → 強制深度思考（不論是否有 LTM）
+    if K >= 0.4:
+        mode = "deliberate"
+    else:
+        mode = decide_mode(C, weights.get("threshold", 0.5))
 
     return {"U": U, "K": K, "S": S, "C": C, "mode": mode}
