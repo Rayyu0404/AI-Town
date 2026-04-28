@@ -1,0 +1,343 @@
+[05:38:08] [INFO] logger 測試訊息
+[05:38:08] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[05:40:11] [INFO] logger 測試訊息
+[05:40:11] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[05:46:19] [INFO] logger 測試訊息
+[05:46:19] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[16:16:30] [INFO] logger 測試訊息
+[16:16:30] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[17:02:27] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:02:27] [INFO] [A] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:02:27] [INFO] [B] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:02:27] [INFO] [C] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:02:27] [INFO] [D] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:02:27] [INFO] [E] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:02:27] [INFO] [A] D001_T002 | mode=intuitive | C=0.000 | action=工作
+[17:02:27] [INFO] [B] D001_T002 | mode=intuitive | C=0.000 | action=工作
+[17:02:27] [INFO] [A] 開始睡眠濃縮...
+[17:02:27] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:02:27] [INFO] [B] 開始睡眠濃縮...
+[17:02:27] [INFO] [B] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:02:27] [INFO] [C] 開始睡眠濃縮...
+[17:02:27] [INFO] [C] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:02:27] [INFO] [D] 開始睡眠濃縮...
+[17:02:27] [INFO] [D] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:02:27] [INFO] [E] 開始睡眠濃縮...
+[17:02:27] [INFO] [E] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:02:27] [INFO] [A→B] 對話傳遞
+[17:02:27] [INFO] [B] D002_T001 | mode=intuitive | C=0.100 | action=工作
+[17:03:26] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:03:26] [INFO] [A] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:03:26] [INFO] [B] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:03:26] [INFO] [C] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:03:26] [INFO] [D] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:03:26] [INFO] [E] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:03:26] [INFO] [A] D001_T002 | mode=intuitive | C=0.000 | action=工作
+[17:03:26] [INFO] [B] D001_T002 | mode=intuitive | C=0.000 | action=工作
+[17:03:26] [INFO] [A] 開始睡眠濃縮...
+[17:03:26] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:03:26] [INFO] [A] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:03:26] [INFO] [A] 存檔完成，進入第 2 天
+[17:03:26] [INFO] [B] 開始睡眠濃縮...
+[17:03:26] [INFO] [B] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:03:26] [INFO] [B] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:03:26] [INFO] [B] 存檔完成，進入第 2 天
+[17:03:26] [INFO] [C] 開始睡眠濃縮...
+[17:03:26] [INFO] [C] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:03:26] [INFO] [C] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:03:26] [INFO] [C] 存檔完成，進入第 2 天
+[17:03:26] [INFO] [D] 開始睡眠濃縮...
+[17:03:26] [INFO] [D] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:03:26] [INFO] [D] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:03:26] [INFO] [D] 存檔完成，進入第 2 天
+[17:03:26] [INFO] [E] 開始睡眠濃縮...
+[17:03:26] [INFO] [E] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:03:26] [INFO] [E] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:03:26] [INFO] [E] 存檔完成，進入第 2 天
+[17:03:26] [INFO] 所有角色已入睡，世界推進到第 2 天
+[17:03:26] [INFO] [A→B] 對話傳遞
+[17:03:26] [INFO] [B] D002_T001 | mode=intuitive | C=0.100 | action=工作
+[17:03:34] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:03:34] [INFO] [A] D002_T001 | mode=intuitive | C=0.060 | action=工作
+[17:03:34] [INFO] [B] D002_T001 | mode=intuitive | C=0.100 | action=工作
+[17:03:34] [INFO] [C] D002_T001 | mode=intuitive | C=0.300 | action=工作
+[17:03:34] [INFO] [D] D002_T001 | mode=intuitive | C=0.040 | action=工作
+[17:03:34] [INFO] [E] D002_T001 | mode=intuitive | C=0.080 | action=工作
+[17:03:34] [INFO] [A] D002_T002 | mode=intuitive | C=0.000 | action=工作
+[17:03:34] [INFO] [B] D002_T002 | mode=intuitive | C=0.000 | action=工作
+[17:03:34] [INFO] [A] 開始睡眠濃縮...
+[17:03:34] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 2 筆
+[17:03:34] [INFO] [A] Day 3 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 2 筆命題
+[17:03:34] [INFO] [A] 存檔完成，進入第 3 天
+[17:03:34] [INFO] [B] 開始睡眠濃縮...
+[17:03:34] [INFO] [B] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 2 筆
+[17:03:34] [INFO] [B] Day 3 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 2 筆命題
+[17:03:34] [INFO] [B] 存檔完成，進入第 3 天
+[17:03:34] [INFO] [C] 開始睡眠濃縮...
+[17:03:34] [INFO] [C] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 2 筆
+[17:03:34] [INFO] [C] Day 3 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 2 筆命題
+[17:03:34] [INFO] [C] 存檔完成，進入第 3 天
+[17:03:34] [INFO] [D] 開始睡眠濃縮...
+[17:03:34] [INFO] [D] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 2 筆
+[17:03:34] [INFO] [D] Day 3 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 2 筆命題
+[17:03:34] [INFO] [D] 存檔完成，進入第 3 天
+[17:03:34] [INFO] [E] 開始睡眠濃縮...
+[17:03:34] [INFO] [E] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 2 筆
+[17:03:34] [INFO] [E] Day 3 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 2 筆命題
+[17:03:34] [INFO] [E] 存檔完成，進入第 3 天
+[17:03:34] [INFO] 所有角色已入睡，世界推進到第 2 天
+[17:03:34] [INFO] [A→B] 對話傳遞
+[17:03:34] [INFO] [B] D003_T001 | mode=intuitive | C=0.100 | action=工作
+[17:03:40] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:03:40] [INFO] [A] D003_T001 | mode=intuitive | C=0.060 | action=工作
+[17:03:40] [INFO] [B] D003_T001 | mode=intuitive | C=0.100 | action=工作
+[17:03:40] [INFO] [C] D003_T001 | mode=intuitive | C=0.300 | action=工作
+[17:03:40] [INFO] [D] D003_T001 | mode=intuitive | C=0.040 | action=工作
+[17:03:40] [INFO] [E] D003_T001 | mode=intuitive | C=0.080 | action=工作
+[17:03:40] [INFO] [A] D003_T002 | mode=intuitive | C=0.000 | action=工作
+[17:03:40] [INFO] [B] D003_T002 | mode=intuitive | C=0.000 | action=工作
+[17:03:40] [INFO] [A] 開始睡眠濃縮...
+[17:03:40] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 3 筆
+[17:03:40] [INFO] [A] Day 4 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 3 筆命題
+[17:03:40] [INFO] [A] 存檔完成，進入第 4 天
+[17:03:40] [INFO] [B] 開始睡眠濃縮...
+[17:03:40] [INFO] [B] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 3 筆
+[17:03:40] [INFO] [B] Day 4 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 3 筆命題
+[17:03:40] [INFO] [B] 存檔完成，進入第 4 天
+[17:03:40] [INFO] [C] 開始睡眠濃縮...
+[17:03:40] [INFO] [C] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 3 筆
+[17:03:40] [INFO] [C] Day 4 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 3 筆命題
+[17:03:40] [INFO] [C] 存檔完成，進入第 4 天
+[17:03:40] [INFO] [D] 開始睡眠濃縮...
+[17:03:40] [INFO] [D] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 3 筆
+[17:03:40] [INFO] [D] Day 4 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 3 筆命題
+[17:03:40] [INFO] [D] 存檔完成，進入第 4 天
+[17:03:40] [INFO] [E] 開始睡眠濃縮...
+[17:03:40] [INFO] [E] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 3 筆
+[17:03:40] [INFO] [E] Day 4 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 3 筆命題
+[17:03:40] [INFO] [E] 存檔完成，進入第 4 天
+[17:03:40] [INFO] 所有角色已入睡，世界推進到第 2 天
+[17:03:40] [INFO] [A→B] 對話傳遞
+[17:03:40] [INFO] [B] D004_T001 | mode=intuitive | C=0.100 | action=工作
+[17:03:54] [INFO] logger 測試訊息
+[17:03:54] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[17:07:56] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:07:56] [INFO] [A] D004_T001 | mode=intuitive | C=0.060 | action=工作
+[17:07:56] [INFO] [B] D004_T001 | mode=intuitive | C=0.100 | action=工作
+[17:07:56] [INFO] [C] D004_T001 | mode=intuitive | C=0.300 | action=工作
+[17:07:56] [INFO] [D] D004_T001 | mode=intuitive | C=0.040 | action=工作
+[17:07:56] [INFO] [E] D004_T001 | mode=intuitive | C=0.080 | action=工作
+[17:07:56] [INFO] [A] D004_T002 | mode=intuitive | C=0.000 | action=工作
+[17:07:56] [INFO] [B] D004_T002 | mode=intuitive | C=0.000 | action=工作
+[17:07:56] [INFO] [A] 開始睡眠濃縮...
+[17:07:56] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 4 筆
+[17:07:56] [INFO] [A] Day 5 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 4 筆命題
+[17:07:56] [INFO] [A] 存檔完成，進入第 5 天
+[17:07:56] [INFO] [B] 開始睡眠濃縮...
+[17:07:56] [INFO] [B] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 4 筆
+[17:07:56] [INFO] [B] Day 5 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 4 筆命題
+[17:07:56] [INFO] [B] 存檔完成，進入第 5 天
+[17:07:56] [INFO] [C] 開始睡眠濃縮...
+[17:07:56] [INFO] [C] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 4 筆
+[17:07:56] [INFO] [C] Day 5 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 4 筆命題
+[17:07:56] [INFO] [C] 存檔完成，進入第 5 天
+[17:07:56] [INFO] [D] 開始睡眠濃縮...
+[17:07:56] [INFO] [D] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 4 筆
+[17:07:56] [INFO] [D] Day 5 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 4 筆命題
+[17:07:56] [INFO] [D] 存檔完成，進入第 5 天
+[17:07:56] [INFO] [E] 開始睡眠濃縮...
+[17:07:56] [INFO] [E] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 4 筆
+[17:07:56] [INFO] [E] Day 5 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 4 筆命題
+[17:07:56] [INFO] [E] 存檔完成，進入第 5 天
+[17:07:56] [INFO] 所有角色已入睡，世界推進到第 2 天
+[17:07:56] [INFO] [A→B] 對話傳遞
+[17:07:56] [INFO] [B] D005_T001 | mode=intuitive | C=0.100 | action=工作
+[17:09:04] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:09:04] [INFO] [A] D005_T001 | mode=intuitive | C=0.060 | action=工作
+[17:09:04] [INFO] [B] D005_T001 | mode=intuitive | C=0.100 | action=工作
+[17:09:04] [INFO] [C] D005_T001 | mode=intuitive | C=0.300 | action=工作
+[17:09:04] [INFO] [D] D005_T001 | mode=intuitive | C=0.040 | action=工作
+[17:09:04] [INFO] [E] D005_T001 | mode=intuitive | C=0.080 | action=工作
+[17:09:04] [INFO] [A] D005_T002 | mode=intuitive | C=0.000 | action=工作
+[17:09:04] [INFO] [B] D005_T002 | mode=intuitive | C=0.000 | action=工作
+[17:09:04] [INFO] [A] 開始睡眠濃縮...
+[17:09:04] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 5 筆
+[17:09:04] [INFO] [A] Day 6 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 5 筆命題
+[17:09:04] [INFO] [A] 存檔完成，進入第 6 天
+[17:09:04] [INFO] [B] 開始睡眠濃縮...
+[17:09:04] [INFO] [B] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 5 筆
+[17:09:04] [INFO] [B] Day 6 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 5 筆命題
+[17:09:04] [INFO] [B] 存檔完成，進入第 6 天
+[17:09:04] [INFO] [C] 開始睡眠濃縮...
+[17:09:04] [INFO] [C] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 5 筆
+[17:09:04] [INFO] [C] Day 6 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 5 筆命題
+[17:09:04] [INFO] [C] 存檔完成，進入第 6 天
+[17:09:04] [INFO] [D] 開始睡眠濃縮...
+[17:09:04] [INFO] [D] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 5 筆
+[17:09:04] [INFO] [D] Day 6 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 5 筆命題
+[17:09:04] [INFO] [D] 存檔完成，進入第 6 天
+[17:09:04] [INFO] [E] 開始睡眠濃縮...
+[17:09:04] [INFO] [E] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 5 筆
+[17:09:04] [INFO] [E] Day 6 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 5 筆命題
+[17:09:04] [INFO] [E] 存檔完成，進入第 6 天
+[17:09:04] [INFO] 所有角色已入睡，世界推進到第 2 天
+[17:09:04] [INFO] [A→B] 對話傳遞
+[17:09:04] [INFO] [B] D006_T001 | mode=intuitive | C=0.100 | action=工作
+[17:09:33] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:09:33] [INFO] [A] D006_T001 | mode=intuitive | C=0.060 | action=工作
+[17:09:33] [INFO] [B] D006_T001 | mode=intuitive | C=0.100 | action=工作
+[17:09:33] [INFO] [C] D006_T001 | mode=intuitive | C=0.300 | action=工作
+[17:09:33] [INFO] [D] D006_T001 | mode=intuitive | C=0.040 | action=工作
+[17:09:33] [INFO] [E] D006_T001 | mode=intuitive | C=0.080 | action=工作
+[17:09:33] [INFO] [A] D006_T002 | mode=intuitive | C=0.000 | action=工作
+[17:09:33] [INFO] [B] D006_T002 | mode=intuitive | C=0.000 | action=工作
+[17:09:33] [INFO] [A] 開始睡眠濃縮...
+[17:09:33] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 6 筆
+[17:09:33] [INFO] [A] Day 7 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 6 筆命題
+[17:09:33] [INFO] [A] 存檔完成，進入第 7 天
+[17:09:33] [INFO] [B] 開始睡眠濃縮...
+[17:09:33] [INFO] [B] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 6 筆
+[17:09:33] [INFO] [B] Day 7 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 6 筆命題
+[17:09:33] [INFO] [B] 存檔完成，進入第 7 天
+[17:09:33] [INFO] [C] 開始睡眠濃縮...
+[17:09:33] [INFO] [C] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 6 筆
+[17:09:33] [INFO] [C] Day 7 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 6 筆命題
+[17:09:33] [INFO] [C] 存檔完成，進入第 7 天
+[17:09:33] [INFO] [D] 開始睡眠濃縮...
+[17:09:33] [INFO] [D] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 6 筆
+[17:09:33] [INFO] [D] Day 7 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 6 筆命題
+[17:09:33] [INFO] [D] 存檔完成，進入第 7 天
+[17:09:33] [INFO] [E] 開始睡眠濃縮...
+[17:09:33] [INFO] [E] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 6 筆
+[17:09:33] [INFO] [E] Day 7 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 6 筆命題
+[17:09:33] [INFO] [E] 存檔完成，進入第 7 天
+[17:09:33] [INFO] 所有角色已入睡，世界推進到第 2 天
+[17:09:33] [INFO] [A→B] 對話傳遞
+[17:09:33] [INFO] [B] D007_T001 | mode=intuitive | C=0.100 | action=工作
+[17:11:41] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:11:41] [INFO] [A] D007_T001 | mode=intuitive | C=0.060 | action=工作
+[17:11:41] [INFO] [B] D007_T001 | mode=intuitive | C=0.100 | action=工作
+[17:11:41] [INFO] [C] D007_T001 | mode=intuitive | C=0.300 | action=工作
+[17:11:41] [INFO] [D] D007_T001 | mode=intuitive | C=0.040 | action=工作
+[17:11:41] [INFO] [E] D007_T001 | mode=intuitive | C=0.080 | action=工作
+[17:11:41] [INFO] [A] D007_T002 | mode=intuitive | C=0.000 | action=工作
+[17:11:41] [INFO] [B] D007_T002 | mode=intuitive | C=0.000 | action=工作
+[17:11:41] [INFO] [A] 開始睡眠濃縮...
+[17:11:41] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 7 筆
+[17:11:41] [INFO] [A] Day 8 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 7 筆命題
+[17:11:41] [INFO] [A] 存檔完成，進入第 8 天
+[17:11:41] [INFO] [B] 開始睡眠濃縮...
+[17:11:41] [INFO] [B] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 7 筆
+[17:11:41] [INFO] [B] Day 8 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 7 筆命題
+[17:11:41] [INFO] [B] 存檔完成，進入第 8 天
+[17:11:41] [INFO] [C] 開始睡眠濃縮...
+[17:11:41] [INFO] [C] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 7 筆
+[17:11:41] [INFO] [C] Day 8 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 7 筆命題
+[17:11:41] [INFO] [C] 存檔完成，進入第 8 天
+[17:11:41] [INFO] [D] 開始睡眠濃縮...
+[17:11:41] [INFO] [D] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 7 筆
+[17:11:41] [INFO] [D] Day 8 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 7 筆命題
+[17:11:41] [INFO] [D] 存檔完成，進入第 8 天
+[17:11:41] [INFO] [E] 開始睡眠濃縮...
+[17:11:41] [INFO] [E] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 7 筆
+[17:11:41] [INFO] [E] Day 8 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 7 筆命題
+[17:11:41] [INFO] [E] 存檔完成，進入第 8 天
+[17:11:41] [INFO] 所有角色已入睡，世界推進到第 2 天
+[17:11:41] [INFO] [A→B] 對話傳遞
+[17:11:41] [INFO] [B] D008_T001 | mode=intuitive | C=0.100 | action=工作
+[17:17:47] [INFO] logger 測試訊息
+[17:17:47] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[17:22:15] [INFO] logger 測試訊息
+[17:22:15] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[17:22:17] [INFO] [A] 開始睡眠濃縮...
+[17:22:17] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:22:17] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:27:15] [INFO] logger 測試訊息
+[17:27:15] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[17:28:15] [INFO] logger 測試訊息
+[17:28:15] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[17:28:18] [INFO] [A] 開始睡眠濃縮...
+[17:28:18] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:28:18] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:28:18] [INFO] [A] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:28:18] [INFO] [A] D001_T002 | mode=intuitive | C=0.000 | action=工作
+[17:28:18] [INFO] [B] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:28:18] [INFO] [C] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:28:18] [INFO] [D] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:28:18] [INFO] [E] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:28:18] [INFO] [A→B] 對話傳遞
+[17:28:18] [INFO] [B] D001_T002 | mode=intuitive | C=0.000 | action=工作
+[17:28:18] [INFO] [A] 開始睡眠濃縮...
+[17:28:18] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:28:18] [INFO] [A] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:28:18] [INFO] [A] 存檔完成，進入第 2 天
+[17:28:28] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:28:28] [INFO] [A] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:28:28] [INFO] [B] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:28:28] [INFO] [C] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:28:28] [INFO] [D] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:28:28] [INFO] [E] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:28:28] [INFO] [A] D001_T002 | mode=intuitive | C=0.000 | action=工作
+[17:28:28] [INFO] [B] D001_T002 | mode=intuitive | C=0.000 | action=工作
+[17:28:28] [INFO] [A] 開始睡眠濃縮...
+[17:28:28] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:28:28] [INFO] [A] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:28:28] [INFO] [A] 存檔完成，進入第 2 天
+[17:28:28] [INFO] [B] 開始睡眠濃縮...
+[17:28:28] [INFO] [B] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:28:28] [INFO] [B] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:28:28] [INFO] [B] 存檔完成，進入第 2 天
+[17:28:28] [INFO] [C] 開始睡眠濃縮...
+[17:28:28] [INFO] [C] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:28:28] [INFO] [C] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:28:28] [INFO] [C] 存檔完成，進入第 2 天
+[17:28:28] [INFO] [D] 開始睡眠濃縮...
+[17:28:28] [INFO] [D] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:28:28] [INFO] [D] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:28:28] [INFO] [D] 存檔完成，進入第 2 天
+[17:28:28] [INFO] [E] 開始睡眠濃縮...
+[17:28:28] [INFO] [E] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:28:28] [INFO] [E] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:28:28] [INFO] [E] 存檔完成，進入第 2 天
+[17:28:28] [INFO] 所有角色已入睡，世界推進到第 2 天
+[17:28:28] [INFO] [A→B] 對話傳遞
+[17:28:28] [INFO] [B] D002_T001 | mode=intuitive | C=0.100 | action=工作
+[17:29:07] [INFO] logger 測試訊息
+[17:29:07] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[17:42:39] [INFO] logger 測試訊息
+[17:42:39] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[17:45:44] [INFO] logger 測試訊息
+[17:45:44] [INFO] [A] D001_T001 | mode=intuitive | C=0.320 | action=工作
+[17:45:52] [INFO] [A] 開始睡眠濃縮...
+[17:45:52] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:45:52] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[17:45:52] [INFO] [A] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:45:52] [INFO] [A] D001_T002 | mode=intuitive | C=0.000 | action=工作
+[17:45:52] [INFO] [B] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:45:52] [INFO] [C] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:45:52] [INFO] [D] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:45:52] [INFO] [E] D001_T001 | mode=intuitive | C=0.000 | action=工作
+[17:45:52] [INFO] [A→B] 對話傳遞
+[17:45:52] [INFO] [B] D001_T002 | mode=intuitive | C=0.000 | action=工作
+[17:45:52] [INFO] [A] 開始睡眠濃縮...
+[17:45:52] [INFO] [A] 濃縮完成：新增 1 筆 LTM，修剪 0 筆，總計 1 筆
+[17:45:52] [INFO] [A] Day 2 睡眠濃縮完成 | STM=1 筆 -> LTM 新增後共 1 筆命題
+[17:45:52] [INFO] [A] 存檔完成，進入第 2 天
+[19:37:32] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[19:38:28] [INFO] [A] D001_T001 | mode=intuitive | C=0.000 | action=前往:咖啡廳
+[19:39:26] [INFO] [B] D001_T001 | mode=intuitive | C=0.000 | action=前往:公寓二樓
+[19:40:24] [INFO] [C] D001_T001 | mode=intuitive | C=0.000 | action=前往:公寓二樓
+[19:41:20] [INFO] [D] D001_T001 | mode=intuitive | C=0.000 | action=前往:公寓二樓
+[19:42:14] [INFO] [E] D001_T001 | mode=intuitive | C=0.000 | action=前往:公寓二樓
+[19:43:48] [INFO] [A] D001_T002 | mode=intuitive | C=0.000 | action=前往:咖啡廳
+[19:44:45] [INFO] [B] D001_T002 | mode=intuitive | C=0.000 | action=前往:公寓二樓
+[19:44:45] [INFO] [A] 開始睡眠濃縮...
+[20:17:51] [INFO] AgentManager 初始化，角色：['A', 'B', 'C', 'D', 'E']
+[20:18:59] [INFO] [A] D001_T001 | mode=intuitive | C=0.000 | action=前往:咖啡廳
+[20:20:00] [INFO] [B] D001_T001 | mode=intuitive | C=0.000 | action=前往:公寓二樓
+[20:21:40] [INFO] [C] D001_T001 | mode=intuitive | C=0.000 | action=前往:公寓二樓
+[20:23:19] [INFO] [D] D001_T001 | mode=intuitive | C=0.000 | action=前往:公寓二樓
+[20:24:45] [INFO] [E] D001_T001 | mode=intuitive | C=0.000 | action=前往:公寓二樓
+[20:27:30] [INFO] [A] D001_T002 | mode=intuitive | C=0.000 | action=前往:咖啡廳
+[20:28:52] [INFO] [B] D001_T002 | mode=intuitive | C=0.000 | action=前往:公寓二樓
+[20:28:52] [INFO] [A] 開始睡眠濃縮...

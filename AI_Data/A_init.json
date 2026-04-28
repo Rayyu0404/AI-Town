@@ -1,0 +1,196 @@
+{
+  "name": "Amy",
+  "name_code": "A",
+  "role": "咖啡師",
+  "gender": "女",
+  "age": 24,
+  "residence": "公寓三樓",
+  "personality_short": "溫柔體貼但壓抑自己，習慣照顧他人，不輕易表露真實情緒。",
+  "personality": "Amy對工作投入且有責任感。習慣把他人的需求放在自己之前，不輕易說出真正的感受。渴望被理解，但同時害怕太過親近會讓自己受傷。不會刻意討好人，但對身邊的人很細心。",
+  "habit": "Amy每天早起泡咖啡，對咖啡品質要求高。喜歡乾淨整齊的環境，會主動整理公共區域。工作時專注有條理，對客人友善但保持適當距離。",
+  "relationships": {
+    "B": {
+      "initial": "Ben在追求Amy，Amy知道但沒有回應。Amy不想讓Ben難堪，也不確定怎麼拒絕，所以一直保持模糊態度。",
+      "summary": "Amy 和 Ben 之間現在的關係仍然模糊，但有可能發生變化，因為 Claire 現在在公寓二樓，�"
+    },
+    "C": {
+      "initial": "普通朋友。Claire常來咖啡廳聊天，Amy對她的直率感到自在，但沒有特別的感情。",
+      "summary": "Amy 和 Claire 之間現在是朋友，但今天有重要變化，Claire 在公寓二樓走近並開口跟 Amy 說。"
+    },
+    "D": {
+      "initial": "Amy暗自欣賞David，覺得他可靠穩重。但Amy擔心表達感情會讓David尷尬或影響他工作，所以從未說出口。",
+      "summary": ""
+    },
+    "E": {
+      "initial": "最好的朋友。Amy和Emma兩人可以放鬆地分享生活中的任何事，是Amy最信任的人。",
+      "summary": "Amy 和 Emma 仍然是最好的朋友，但今天有一些重要的事情發生，例如 Ben 現在在公寓二樓，而 Claire 也"
+    }
+  },
+  "emotion": "不安",
+  "stm": {
+    "capacity": 15,
+    "turns": []
+  },
+  "ltm": {
+    "ltm_summary": "Amy 在公寓二樓，工作了三天。她在第一天和第三天都在第一天的 09:00 到 19:00 時間段工作。她在",
+    "propositions": [
+      {
+        "id": "L001",
+        "subject": "公寓",
+        "relation": "位置",
+        "object": "公寓",
+        "location": "公寓二樓",
+        "time": "07:00",
+        "strength": 0.8499999999999999,
+        "access_count": 0,
+        "encoded_day": 1
+      },
+      {
+        "id": "L002",
+        "subject": "Amy",
+        "relation": "工作",
+        "object": "公寓二樓",
+        "location": "公寓",
+        "time": "第1天 08:00",
+        "strength": 0.9941176470588236,
+        "access_count": 15,
+        "encoded_day": 1
+      },
+      {
+        "id": "L003",
+        "subject": "Amy",
+        "relation": "工作",
+        "object": "公寓二樓",
+        "location": "",
+        "time": "第1天 09:00",
+        "strength": 0.9941176470588236,
+        "access_count": 15,
+        "encoded_day": 1
+      },
+      {
+        "id": "L004",
+        "subject": "Amy",
+        "relation": "目前場景",
+        "object": "公寓二樓",
+        "location": "公寓二樓",
+        "time": "第1天 18:00",
+        "strength": 0.99,
+        "access_count": 8,
+        "encoded_day": 2
+      },
+      {
+        "id": "L005",
+        "subject": "Amy",
+        "relation": "工作",
+        "object": "公寓二樓",
+        "location": "公寓",
+        "time": "第1天 19:00",
+        "strength": 0.99,
+        "access_count": 8,
+        "encoded_day": 2
+      },
+      {
+        "id": "L006",
+        "subject": "Amy",
+        "relation": "工作",
+        "object": "公寓二樓",
+        "location": "公寓二樓",
+        "time": "第2天 07:00",
+        "strength": 0.99,
+        "access_count": 8,
+        "encoded_day": 2
+      },
+      {
+        "id": "L007",
+        "subject": "公寓",
+        "relation": "位置",
+        "object": "公寓二樓",
+        "location": "公寓二樓",
+        "time": "第3天 07:00",
+        "strength": 0.95,
+        "access_count": 0,
+        "encoded_day": 3
+      },
+      {
+        "id": "L008",
+        "subject": "Amy",
+        "relation": "工作",
+        "object": "公寓二樓",
+        "location": "公寓",
+        "time": "第3天 09:00",
+        "strength": 0.95,
+        "access_count": 0,
+        "encoded_day": 3
+      },
+      {
+        "id": "L009",
+        "subject": "Amy",
+        "relation": "工作",
+        "object": "公寓二樓",
+        "location": "公寓",
+        "time": "第3天 09:00",
+        "strength": 0.95,
+        "access_count": 0,
+        "encoded_day": 3
+      }
+    ]
+  },
+  "state": {
+    "day": 4,
+    "current_location": "公寓二樓",
+    "current_action": "煮飯",
+    "today_actions": []
+  },
+  "schedule": {
+    "slots": [
+      {
+        "time": "07:00",
+        "action": "起床泡咖啡",
+        "location": "公寓",
+        "type": "fixed",
+        "completed": false
+      },
+      {
+        "time": "08:30",
+        "action": "前往咖啡廳開店",
+        "location": "咖啡廳",
+        "type": "fixed",
+        "completed": false
+      },
+      {
+        "time": "12:00",
+        "action": "午休",
+        "location": "咖啡廳後場",
+        "type": "fixed",
+        "completed": false
+      },
+      {
+        "time": "18:00",
+        "action": "打烊整理",
+        "location": "咖啡廳",
+        "type": "fixed",
+        "completed": false
+      },
+      {
+        "time": "19:00",
+        "action": "回公寓",
+        "location": "公寓",
+        "type": "fixed",
+        "completed": false
+      },
+      {
+        "time": "23:00",
+        "action": "睡覺",
+        "location": "公寓",
+        "type": "fixed",
+        "completed": false
+      }
+    ]
+  },
+  "confusion_weights": {
+    "w1": 0.4,
+    "w2": 0.3,
+    "w3": 0.3,
+    "threshold": 0.36
+  }
+}
